@@ -287,26 +287,32 @@ declare private function json:escapeNCName(
     $val as xs:string
 ) as xs:string
 {
-    fn:string-join(
-        let $regex := ':|_|(\i)|(\c)|.'
-        for $match at $pos in fn:analyze-string($val, $regex)/*
-        return
-            if($match/*:group/@nr = 1 or ($match/*:group/@nr = 2 and $pos != 1))
-            then fn:string($match)
-            else ("_", json:encodeHexStringHelper(fn:string-to-codepoints($match), 4))
-    , "")
+    if($val = "")
+    then "_"
+    else
+        fn:string-join(
+            let $regex := ':|_|(\i)|(\c)|.'
+            for $match at $pos in fn:analyze-string($val, $regex)/*
+            return
+                if($match/*:group/@nr = 1 or ($match/*:group/@nr = 2 and $pos != 1))
+                then fn:string($match)
+                else ("_", json:encodeHexStringHelper(fn:string-to-codepoints($match), 4))
+        , "")
 };
 
 declare private function json:unescapeNCName(
     $val as xs:string
 ) as xs:string
 {
-    fn:string-join(
-        let $regex := '(_[A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9])|[^_]+'
-        for $match at $pos in fn:analyze-string($val, $regex)/*
-        return
-            if($match/*:group/@nr = 1)
-            then fn:codepoints-to-string(xdmp:hex-to-integer(fn:substring($match, 2)))
-            else fn:string($match)
-  , "")
+    if($val = "_")
+    then ""
+    else
+        fn:string-join(
+            let $regex := '(_[A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9])|[^_]+'
+            for $match at $pos in fn:analyze-string($val, $regex)/*
+            return
+                if($match/*:group/@nr = 1)
+                then fn:codepoints-to-string(xdmp:hex-to-integer(fn:substring($match, 2)))
+                else fn:string($match)
+      , "")
 };

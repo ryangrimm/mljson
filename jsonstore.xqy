@@ -55,8 +55,8 @@ return
             if($rawOutut)
             then doc($uri)
             else if($fromJSONOutut)
-            then <foo>{ xdmp:from-json(json:xmlToJson(doc($uri)/*)) }</foo>/*
-            else json:xmlToJson(doc($uri)/*)
+            then <foo>{ xdmp:from-json(json:xmlToJSON(doc($uri)/*)) }</foo>/*
+            else json:xmlToJSON(doc($uri)/*)
         else xdmp:document-get-properties($uri, $properties)
     else if($requestMethod = "DELETE")
     then xdmp:document-delete($uri)

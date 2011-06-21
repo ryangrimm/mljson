@@ -5,7 +5,7 @@ declare default function namespace "http://www.w3.org/2005/xpath-functions";
 
 declare function json:jsonToXML(
     $json as xs:string
-)
+) as element(json)
 {
     let $tokens := json:tokenize($json)
     let $value := json:parseValue($tokens, 1)
@@ -13,7 +13,7 @@ declare function json:jsonToXML(
         if(xs:integer($value/@position) != fn:count($tokens) + 1)
         then json:outputError($tokens, xs:integer($value/@position), "Unhandled tokens")
         else ()
-    return document {<json>{ $value/(@type, @boolean), $value/node() }</json>}
+    return <json>{ $value/(@type, @boolean), $value/node() }</json>
 };
 
 declare private function json:parseValue(

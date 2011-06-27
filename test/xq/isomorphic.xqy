@@ -1,18 +1,11 @@
 xquery version "1.0-ml";
 
-import module namespace json = "http://marklogic.com/json" at "/lib/json.xqy";
+import module namespace json = "http://marklogic.com/json" at "/data/lib/json.xqy";
+
 
 try {
-    let $json := xdmp:get-request-field("json")
-    let $transformed := json:xmlToJSON(json:jsonToXML($json))
-    let $valid := $json = $transformed
-    let $log :=
-        if($valid)
-        then ()
-        else xdmp:log(fn:concat("Got: ", $transformed, " Expected: ", $json))
-    return $valid
+    json:xmlToJSON(json:jsonToXML(xdmp:get-request-field("json")))
 }
 catch ($e) {
-    fn:concat("Logged Exception: ", $e//*:message),
-    xdmp:log(fn:concat("Exception: ", xdmp:quote($e), " Expected: ", xdmp:get-request-field("json")))
+    xdmp:set-response-code(500, string($e//*:message))
 }
